@@ -1,10 +1,10 @@
-// Override shared variables for main site BEFORE importing
-$primary-color: #ff0000;
-$secondary-color: #10b981;
-$accent-color: #f59e0b;
-
-// Import shared styles
-@import '@styles/index.scss';
+// Import shared styles with variable overrides
+@use '@styles/variables' as * with (
+  $primary-color: #ff0000,
+  $secondary-color: #10b981,
+  $accent-color: #f59e0b
+);
+@use '@styles/index';
 
 // Main site specific styles
 .main-content {

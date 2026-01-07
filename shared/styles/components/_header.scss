@@ -1,3 +1,6 @@
+@use 'sass:color';
+@use '../variables' as *;
+
 .blnt-header {
   padding: $spacing-lg 0;
   background-color: $primary-color;
@@ -17,7 +20,7 @@
     transition: opacity 0.2s ease;
 
     &:hover {
-      color: darken($color: white, $amount: 10%);
+      color: color.adjust(white, $lightness: -10%);
     }
   }
 

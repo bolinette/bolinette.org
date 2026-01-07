@@ -1,8 +1,9 @@
-$primary-color: #321325;
-$secondary-color: #5f0f40;
-$accent-color: #fcdc4d;
-
-@import '@styles/index.scss';
+@use '@styles/variables' as * with (
+  $primary-color: #321325,
+  $secondary-color: #5f0f40,
+  $accent-color: #fcdc4d
+);
+@use '@styles/index.scss';
 
 .blnt-header {
     .github-banner {
