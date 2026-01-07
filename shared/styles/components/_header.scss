@@ -1,0 +1,40 @@
+.blnt-header {
+  padding: $spacing-lg 0;
+  background-color: $primary-color;
+  color: white;
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site-name {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      color: darken($color: white, $amount: 10%);
+    }
+  }
+
+  .nav {
+    display: flex;
+    gap: $spacing-lg;
+    align-items: center;
+  }
+
+  .link {
+    color: white;
+    text-decoration: none;
+    font-weight: $font-weight-medium;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+_site/
+dist/
+.env
+.env.local
+.DS_Store
+*.log
+.pnp.*
+.yarn

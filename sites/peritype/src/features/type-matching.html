@@ -1,0 +1,29 @@
+<a name="type-matching"><h1>Type Matching</h1></a>
+
+<p>
+  Python's <code>isinstance()</code> and <code>issubclass()</code> do not
+  support checking generic types. Peritype's type wrappers provide a powerful
+  <code>match()</code> method to check if a type matches another type, including
+  generics, unions, and more.
+</p>
+
+<pre><code>from typing import Any
+from peritype import wrap_type
+
+# Wrap simple types
+assert wrap_type(int).match(int)
+assert not wrap_type(int).match(str)
+
+# Wrap union types
+assert wrap_type(int | str).match(int)
+assert wrap_type(int | str).match(str)
+assert wrap_type(int).match(int | str)
+
+# Wrap generic types
+assert wrap_type(list[int]).match(list[int])
+assert wrap_type(list[int]).match(list[int | str])
+
+# Test with Any
+assert wrap_type(list[int]).match(list[Any])
+assert wrap_type(list[Any]).match(list[int])
+</code></pre>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="{{description}}" />
+    <title>Peritype</title>
+    <link rel="stylesheet" href="/styles/index.scss" />
+  </head>
+  <body>
+    <header class="blnt-header">
+      <div class="container">
+        <a href="/" class="site-name">Peritype</a>
+        <a href="https://github.com/bolinette/peritype" class="github-banner">
+          <img src="github-mark.svg" alt="GitHub Logo" />
+          <img src="github-logo.png" alt="GitHub Logo" />
+        </a>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container">
+        <div class="big-name">Peritype</div>
+        <section>{{> intro}}</section>
+      </div>
+
+      <div class="container docs-layout">
+        <div class="docs-content">
+          <section>{{> installation}}</section>
+          <section>{{> type-wrapper}}</section>
+          <section>{{> type-matching}}</section>
+          <section>{{> type-inspect}}</section>
+          <section>{{> func-wrapper}}</section>
+          <section>{{> cache}}</section>
+        </div>
+
+        <aside class="docs-toc">
+          <nav>
+            <ul>
+              <li><a href="#installation">Installation</a></li>
+              <li><a href="#type-wrapper">Type Wrapper</a></li>
+              <li><a href="#type-matching">Type Matching</a></li>
+              <li>
+                <a href="#type-inspect">Type Inspection</a>
+                <ul>
+                  <li><a href="#type-inspect--simple">Simple types</a></li>
+                  <li><a href="#type-inspect--nullables">Nullables</a></li>
+                  <li><a href="#type-inspect--generics">Generics</a></li>
+                  <li><a href="#type-inspect--unions">Union types</a></li>
+                  <li>
+                    <a href="#type-inspect--annotated">Annotated Types</a>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="#func-wrapper">Function Wrapper</a></li>
+              <li><a href="#cache">Cache</a></li>
+            </ul>
+          </nav>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="blnt-footer">
+      <p>&copy; 2026 Bolinette</p>
+    </footer>
+  </body>
+</html>

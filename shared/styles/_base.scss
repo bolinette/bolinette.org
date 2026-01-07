@@ -1,0 +1,96 @@
+@import 'variables';
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $text-color;
+  background-color: $bg-color;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  margin-bottom: $spacing-md;
+}
+
+h1 {
+  font-size: $font-size-4xl;
+  margin-top: $spacing-xl;
+}
+
+h2 {
+  font-size: $font-size-3xl;
+}
+
+h3 {
+  font-size: $font-size-2xl;
+}
+
+h4 {
+  font-size: $font-size-xl;
+}
+
+h5 {
+  font-size: $font-size-lg;
+}
+
+h6 {
+  font-size: $font-size-base;
+}
+
+p {
+  margin-bottom: $spacing-md;
+}
+
+pre {
+  font-size: $font-size-sm;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+a[href] {
+  color: $secondary-color;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: darken($secondary-color, 10%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $secondary-color;
+    outline-offset: 2px;
+  }
+}
+
+// Layout utilities
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 $spacing-unit;
+
+  @media (min-width: $breakpoint-sm) {
+    max-width: 540px;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    max-width: 720px;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    max-width: 960px;
+  }
+
+  @media (min-width: $breakpoint-xl) {
+    max-width: 1140px;
+  }
+
+  @media (min-width: $breakpoint-2xl) {
+    max-width: 1320px;
+  }
+}
+
+.section {
+  padding: $spacing-2xl 0;
+}

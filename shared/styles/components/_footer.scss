@@ -1,0 +1,12 @@
+// Footer component
+.blnt-footer {
+  text-align: center;
+  font-size: $font-size-sm;
+  padding: $spacing-sm 0;
+  margin-top: $spacing-2xl;
+  color: $text-light;
+
+  p {
+    margin: 0;
+  }
+}

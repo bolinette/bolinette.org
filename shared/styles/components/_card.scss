@@ -1,0 +1,34 @@
+// Card component
+.blnt-card {
+  background: white;
+  border-radius: $border-radius-lg;
+  padding: $spacing-2xl;
+  text-decoration: none;
+  color: $text-color;
+  transition: box-shadow 0.2s ease;
+  box-shadow: $shadow-md;
+  display: block;
+
+  &:hover {
+    box-shadow: $shadow-xl;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    margin-bottom: $spacing-md;
+    color: $primary-color;
+  }
+
+  &__description {
+    color: $text-light;
+    margin: 0;
+  }
+}
+
+// Card grid layout
+.blnt-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $spacing-xl;
+  margin-top: $spacing-2xl;
+}

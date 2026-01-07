@@ -1,0 +1,155 @@
+<a name="type-inspect"><h1>Type Inspection</h1></a>
+
+<p>
+  With Peritype, you can inspect the type hints of a Python class, like
+  attributes and method signatures.
+</p>
+
+<a name="type-inspect--simple"><h2>Simple types</h2></a>
+
+<pre><code>from typing import Any, TypedDict
+from peritype import wrap_type
+
+class HttpClient:
+    def get(self, url: str) -> dict[str, Any]:
+        ...
+
+class DataObject(TypedDict):
+    id: int
+    name: str
+
+class Service:
+    def __init__(self, http_client: HttpClient) -> None:
+        self.http_client = http_client
+
+    def fetch_object(self, url: str) -> DataObject:
+        return self.http_client.get(url)
+</code></pre>
+
+<p>
+  All wrapped types provide wrapped types for their attributes and methods. You
+  can access attribute type hints via the <code>attribute_hints</code> property.
+  You will get a dictionary mapping attribute names to their corresponding type
+  wrappers.
+</p>
+
+<pre><code>data_w = wrap_type(DataObject)
+attr_hints = data_w.attribute_hints
+assert attr_hints["id"].match(int)
+assert attr_hints["name"].match(str)
+</code></pre>
+
+<p>
+  You can access a wrapped method using the <code>get_method()</code> method.
+  This returns a wrapped method, which provides access to the method's signature
+  hints and more, see <a href="#func-wrapper">Function wrapper</a> for details.
+</p>
+
+<pre><code>service_w = wrap_type(Service)
+method_w = service_w.get_method('fetch_object')
+signature_hints = method_w.get_signature_hints()
+assert signature_hints['url'].match(str)
+return_hint = method_w.get_return_hint()
+assert return_hint.match(data_w)
+</code></pre>
+
+<a name="type-inspect--nullables"><h2>Nullables</h2></a>
+
+<p>
+  If the wrapped type is a union with <code>None</code>, Peritype sets the
+  <code>nullable</code> property on the wrapped type to <code>True</code>.
+</p>
+
+<a name="type-inspect--generics"><h2>Generics</h2></a>
+
+<p>
+  If you're working with generic types, especially those that inherit from other
+  generics, Peritype can resolve the generic parameters for you when you wrap
+  the type.
+</p>
+<pre><code>from peritype import wrap_type
+
+class GenericParent[T]:
+    def get_value(self) -> T:
+        ...
+
+class GenericChild[T, U](GenericParent[U]):
+    def get_other_value(self) -> T:
+        ...
+
+wrapped_child = wrap_type(GenericChild[int, str])
+
+value_w = wrapped_child.get_method('get_value')
+value_signature = value_w.get_signature_hints()
+assert value_w.get_return_hint().match(str)
+
+other_value_w = wrapped_child.get_method('get_other_value')
+other_value_signature = other_value_w.get_signature_hints()
+assert other_value_w.get_return_hint().match(int)
+</code></pre>
+
+<p>
+  To inspect the generic parameters of a wrapped type, you can use the
+  <code>generic_params</code> property, which returns a tuple of type wrappers
+  representing the resolved generic parameters.
+</p>
+
+<pre><code>generic_params = wrapped_child.generic_params
+assert generic_params[0].match(int)  # T
+assert generic_params[1].match(str)  # U
+</code></pre>
+
+<a name="type-inspect--unions"><h2>Union types</h2></a>
+
+<p>
+  All of the above inspection features will not work with union types, they will
+  raise a <code>TypeError</code> upon usage.
+</p>
+
+<p>
+  Peritype internal structure works with &ldquo;nodes&rdquo;. You can access
+  them via the <code>nodes</code> property on any type wrapper. It return a
+  tuple of type nodes, from which you can call the same inspection features as
+  above in this section, even type matching.
+</p>
+
+<pre><code>from peritype import wrap_type
+
+union_w = wrap_type(GenericChild[int, str] | GenericChild[str, int])
+assert union_w.is_union
+
+nodes = union_w.nodes
+
+node1 = nodes[0]
+assert node1.get_method('get_other_value').get_return_hint().match(int)
+assert node1.generic_params == (wrap_type(int), wrap_type(str))
+
+node2 = nodes[1]
+assert node2.get_method('get_other_value').get_return_hint().match(str)
+assert node2.generic_params == (wrap_type(str), wrap_type(int))
+</code></pre>
+
+<p>
+  Note: <code>Service | None</code> is not considered a union type by Peritype.
+</p>
+
+<a name="type-inspect--annotated"><h2>Annotated types</h2></a>
+
+<p>
+  Python's <code>Annotated</code> metadata is picked up by Peritype's type
+  wrappers. You can access the metadata using the
+  <code>annotations</code> property on any type wrapper. It will return a tuple
+  of all annotations, in the order they were defined, without any processing.
+</p>
+
+<pre><code>from typing import Annotated
+from peritype import wrap_type
+
+type AnnotatedInt = Annotated[int, "Should always be", 42]
+
+annotated_w = wrap_type(AnnotatedInt)
+assert annotated_w.match(int)
+annotations = annotated_w.annotations
+assert annotations[0] == "Should always be"
+assert annotations[1] == 42
+</code></pre>

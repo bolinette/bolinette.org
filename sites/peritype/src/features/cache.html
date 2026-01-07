@@ -1,0 +1,17 @@
+<a name="cache"><h1>Cache</h1></a>
+
+<p>
+  Peritype includes an internal caching mechanism that stores wrapped types to
+  improve performance. When you wrap a type using <code>wrap_type()</code>, or a
+  function using <code>wrap_func()</code>, the results are cached internally.
+</p>
+
+<p>
+  You can disable the caching mechanism if you want to, but keep in mind that
+  the wrapping operations will be slower without caching.
+</p>
+
+<pre><code>from peritype import use_cache
+
+use_cache(False)
+</code></pre>
