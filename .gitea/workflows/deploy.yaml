@@ -1,0 +1,50 @@
+name: Build Docker images
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push-dockerfile-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Build and push Docker image - bolinette.org
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./sites/main/Containerfile
+          push: true
+          tags: |
+            ${{ vars.REGISTRY_URL }}/${{ vars.PACKAGE_NS }}/${{ vars.BLNT_PACKAGE_NAME }}:latest
+          platforms: linux/amd64
+
+      - name: Build and push Docker image - peritype.bolinette.org
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./sites/peritype/Containerfile
+          push: true
+          tags: |
+            ${{ vars.REGISTRY_URL }}/${{ vars.PACKAGE_NS }}/${{ vars.PRTP_PACKAGE_NAME }}:latest
+          platforms: linux/amd64
+
+      - name: Build and push Docker image - soupape.bolinette.org
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./sites/soupape/Containerfile
+          push: true
+          tags: |
+            ${{ vars.REGISTRY_URL }}/${{ vars.PACKAGE_NS }}/${{ vars.SPP_PACKAGE_NAME }}:latest
+          platforms: linux/amd64
