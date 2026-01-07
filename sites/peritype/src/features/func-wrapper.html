@@ -1,3 +1,56 @@
 <a name="func-wrapper"><h1>Function wrapper</h1></a>
 
-<p><em>Coming soon.</em></p>
+<p>
+  Function wrapping allows you to inspect type hints and signatures of
+  functions. Type wrappers return function wrappers when accessing methods and
+  type <code>__init__()</code> methods, but you can also wrap functions
+  directly.
+</p>
+
+<pre><code>from peritype import wrap_func
+
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+wrapped_greet = wrap_func(greet)
+
+hints = wrapped_greet.get_signature_hints()
+assert hints["name"].match(str)
+
+return_hint = wrapped_greet.get_return_hint()
+assert return_hint.match(str)
+</code></pre>
+
+<p>
+  <code>inspect.Signature</code> and <code>inspect.Parameter</code> objects are
+  also available via the <code>signature</code> and
+  <code>parameters</code> properties.
+</p>
+
+<pre><code>signature = wrapped_greet.signature
+assert isinstance(signature, inspect.Signature)
+
+params = wrapped_greet.parameters
+assert len(params) == 1
+assert params[0].name == "name"
+</code></pre>
+
+<p>
+  Methods accessed from wrapped types return bound function wrappers, which
+  automatically resolve the generic parameters used in the method signature. If
+  you manually wrap a method, the generic parameters will not be resolved.
+</p>
+
+<pre><code>from peritype import wrap_type
+
+class Service[T]:
+    def fetch_object(self, url: str) -> T:
+        ...
+
+service_w = wrap_type(Service[int])
+method_w = service_w.get_method('fetch_object')
+signature_hints = method_w.get_signature_hints()
+assert signature_hints['url'].match(str)
+return_hint = method_w.get_return_hint()
+assert return_hint.match(int)
+</code></pre>

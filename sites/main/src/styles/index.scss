@@ -1,8 +1,8 @@
 // Import shared styles with variable overrides
 @use '@styles/variables' as * with (
-  $primary-color: #ff0000,
-  $secondary-color: #10b981,
-  $accent-color: #f59e0b
+  $primary-color: #ff002b,
+  $secondary-color: #006bf4,
+  $accent-color: #ff0062
 );
 @use '@styles/index';
 

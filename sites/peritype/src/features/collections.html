@@ -1,0 +1,95 @@
+<a name="collections"><h1>Type collections</h1></a>
+
+<p>Peritype provides handy collections to manipulate and store types.</p>
+
+<a name="collections--type-bag"><h2>TypeBag</h2></a>
+
+<p>
+  The <code>TypeBag</code> is a collection that works like a set but is
+  specifically designed to hold type wrappers. The main feature is being able to
+  get all types that match a given type defined with a <code>Any</code> in its
+  parameters.
+</p>
+
+<pre><code>from typing import Any
+
+from peritype import wrap_type
+from peritype.collections import TypeBag
+
+int_w = wrap_type(int)
+str_w = wrap_type(str)
+
+type_bag = TypeBag()
+type_bag.add(int_w)
+type_bag.add(str_w)
+
+assert int_w in type_bag
+assert wrap_type(float) not in type_bag
+
+matching_types = type_bag.get_all(wrap_type(list[Any]))
+assert len(matching_types) == 2
+assert matching_types == {int_w, str_w}
+</code></pre>
+
+<a name="collections--type-map"><h2>TypeMap</h2></a>
+
+<p>
+  The <code>TypeMap[K, V]</code> is a collection that works like a dictionary
+  but is specifically designed to hold type wrappers as keys and maps to any
+  kind of value. There is also <code>TypeSetMap[K, V]</code> that inherits from
+  <code>TypeMap[K, set[V]]</code> that's handy to map types to multiple values.
+</p>
+
+<pre><code>from typing import Any
+
+from peritype import wrap_type
+from peritype.collections import TypeMap, TypeSetMap
+
+int_w = wrap_type(int)
+str_w = wrap_type(str)
+
+type_map = TypeMap[Any, str]()
+type_map[int_w] = "Integer type"
+type_map[str_w] = "String type"
+
+assert type_map[int_w] == "Integer type"
+assert type_map[str_w] == "String type"
+assert wrap_type(float) not in type_map
+
+set_map = TypeSetMap[Any, str]()
+set_map.push(int_w, "Number type")
+set_map.push(int_w, "Whole number type")
+set_map.push(str_w, "Text type")
+
+assert set_map[int_w] == {"Number type", "Whole number type"}
+assert set_map.count(str_w) == 1
+</code></pre>
+
+<a name="collections--type-super-tree"><h2>TypeSuperTree</h2></a>
+
+<p>
+  The <code>TypeSuperTree</code> stores all types and their bases and associates
+  them each subtype. This allows to quickly get all subtypes stored in the tree
+  of a given type.
+</p>
+
+<pre><code>tree = TypeSuperTree()
+
+class SuperType[T]: ...
+
+class MidType[T](SuperType[T]): ...
+
+class SubType[T](MidType[T]): ...
+
+super_twrap = wrap_type(SuperType[int])
+mid_twrap = wrap_type(MidType[int])
+twrap = wrap_type(SubType[int])
+tree.add(twrap)
+
+assert super_twrap in tree
+assert tree[super_twrap] == {twrap, mid_twrap, super_twrap}
+assert mid_twrap in tree
+assert tree[mid_twrap] == {twrap, mid_twrap}
+assert twrap in tree
+assert tree[twrap] == {twrap}
+</code></pre>
