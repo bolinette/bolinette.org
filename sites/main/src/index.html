@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="<%= description %>">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/styles/index.scss">
-</head>
-<body>
-  <main class="main-content">
-    <div class="container center-content">
-      <h1>Bolinette is under heavy work, but check out the other projects</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bolinette</title>
+    <link rel="stylesheet" href="/styles/index.scss" />
+  </head>
+  <body>
+    <main class="main-content">
+      <div class="container center-content">
+        <h1>Bolinette is under heavy work, but check out the other projects</h1>
 
-      <div class="blnt-card-grid">
-        <a href="<%= peritypeUrl %>" class="blnt-card">
-          <h2 class="blnt-card__title">Peritype</h2>
-          <p class="blnt-card__description">Inspect Python type in a standard and easy way at runtime</p>
-        </a>
+        <div class="blnt-card-grid">
+          <a href="{{ peritypeUrl }}" class="blnt-card">
+            <h2 class="blnt-card__title">Peritype</h2>
+            <p class="blnt-card__description">
+              Inspect Python type in a standard and easy way at runtime
+            </p>
+          </a>
 
-        <a href="<%= soupapeUrl %>" class="blnt-card">
-          <h2 class="blnt-card__title">Soupape</h2>
-          <p class="blnt-card__description">Dependency injection library for Python</p>
-        </a>
+          <a href="{{ soupapeUrl }}" class="blnt-card">
+            <h2 class="blnt-card__title">Soupape</h2>
+            <p class="blnt-card__description">
+              Dependency injection library for Python
+            </p>
+          </a>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <footer class="blnt-footer">
-    <p>&copy; 2026 Bolinette</p>
-  </footer>
+    <footer class="blnt-footer">
+      <p>&copy; 2026 Bolinette</p>
+    </footer>
 
-  <script type="module" src="/index.js"></script>
-</body>
+    <script type="module" src="/index.js"></script>
+  </body>
 </html>

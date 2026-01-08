@@ -1,0 +1,135 @@
+<a name="built-in-injection"><h1>Built-in injection</h1></a>
+
+<p>
+  When registering a service in the collection with its type, Soupape will
+  manage the injection of its dependencies automatically, based on the type
+  hints of its constructor. The injector will also execute a series of lifetime
+  management instructions, described bellow.
+</p>
+
+<a name="built-in-injection--context-manager"
+  ><h2>Context manager services</h2></a
+>
+
+<p>
+  If a service implements the context manager protocol (i.e., it has
+  <code>__enter__</code> and <code>__exit__</code> methods), or the async
+  context manager protocol (i.e., it has <code>__aenter__</code> and
+  <code>__aexit__</code> methods), the built-in resolver will automatically use
+  the appropriate protocol to manage the service's lifetime.
+</p>
+
+<p>
+  <code>__enter__</code> or <code>__aenter__</code> will be called when the
+  service is instantiated, and <code>__exit__</code> or
+  <code>__aexit__</code> will be called when the injector or scope managing the
+  service is exited.
+</p>
+
+<p>
+  <code>SyncInjector</code> will only manage services implementing the context
+  manager protocol and will ignore the async context manager protocol.
+  <code>AsyncInjector</code> can manage both protocols, but will prefer the
+  async context manager protocol and ignore the synchronous one if both are
+  implemented.
+</p>
+
+<pre><code>from typing import Self
+from soupape import ServiceCollection, AsyncInjector
+
+class AsyncService:
+    async def __aenter__(self) -> Self:
+        print("Entering async service")
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        print("Exiting async service")
+
+def define_services() -> ServiceCollection:
+    services = ServiceCollection()
+    services.add_singleton(AsyncService)
+    return services
+
+async def main() -> None:
+    services = define_services()
+
+    async with AsyncInjector(services) as injector:
+        async_service = await injector.require(AsyncService)
+</code></pre>
+
+<p>
+  In this example, when the injector is entered, the
+  <code>AsyncService.__aenter__</code> method is called, and when the injector
+  is exited, the <code>AsyncService.__aexit__</code> method is called.
+</p>
+
+<a name="built-in-injection--post-init"><h2>Post-initialization methods</h2></a>
+
+<p>
+  When using the built-in resolver, you can decorate a method with
+  <code>@post_init</code> to have it called automatically after the service is
+  instantiated and all its dependencies are injected. These methods will be
+  called in the order they are defined in the class, from base classes to
+  derived classes.
+</p>
+
+<p>
+  Asynchronous methods will be awaited automatically when using
+  <code>AsyncInjector</code>, but <code>SyncInjector</code> will raise an error
+  if a <code>@post_init</code> method is async.
+</p>
+
+<p>
+  Post-initialization methods are a good place to put initialization logic in an
+  orderly manner, especially if you need to use a dependency that is not
+  required in the other parts of the class. Contrary to context manager that
+  must use the dependencies injected in the constructor, post-initialization
+  methods can use any dependency declared as a parameter.
+</p>
+
+<p>These methods are called after the context manager methods, if any.</p>
+
+<p>
+  Keep in mind that post-initialization methods are called during instantiation,
+  so the circular dependency restrictions still apply.
+</p>
+
+<pre><code>from soupape import ServiceCollection, AsyncInjector, post_init
+
+class ServiceA:
+    def __init__(self) -> None:
+        self.initialized = False
+
+    @post_init
+    async def _initialize(self) -> None:
+        print("Initializing ServiceA")
+        self.initialized = True
+
+class ServiceB:
+    def __init__(self, service_a: ServiceA) -> None:
+        self.service_a = service_a
+
+    @post_init
+    def _check_service_a(self) -> None:
+        print(f"ServiceA initialized: {self.service_a.initialized}")
+
+def define_services() -> ServiceCollection:
+    services = ServiceCollection()
+    services.add_singleton(ServiceA)
+    services.add_singleton(ServiceB)
+    return services
+
+async def main() -> None:
+    services = define_services()
+
+    async with AsyncInjector(services) as injector:
+        service_b = await injector.require(ServiceB)
+</code></pre>
+
+<p>
+  Prefixing methods with an underscore is a common convention to indicate that
+  they are intended for internal use only. Post-initialization methods are not
+  part of the public API of the class and should not be called from outside.
+  Ideally, they should not be called directly at all and should only be used by
+  the injection system.
+</p>

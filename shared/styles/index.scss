@@ -1,10 +1,8 @@
-// Base shared styles
-// Import this file in site-specific stylesheets to get all shared styles
-@use 'reset';
-@use 'layout';
-@use 'base';
+@use "reset";
+@use "layout";
+@use "base";
 
-// Components
-@use 'components/header';
-@use 'components/footer';
-@use 'components/card';
+@use "components/header";
+@use "components/footer";
+@use "components/card";
+@use "components/toc";

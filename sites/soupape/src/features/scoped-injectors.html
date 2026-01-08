@@ -1,0 +1,57 @@
+<a name="scoped-injectors"><h1>Scoped Injectors</h1></a>
+
+<p>
+  Scopes allow you to create child injectors that can instantiate scoped
+  services. This feature is useful to manage lifetimes of services that should
+  be created and disposed of together, such as per-request services in web
+  applications, while keeping the singleton services shared across the entire
+  application lifetime, or any other lifetime management strategy.
+</p>
+
+<p>
+  A scoped injector is created from a parent injector using the
+  <code>get_scoped_injector()</code> method.
+</p>
+
+<p>
+  Like the root injector, scoped injectors should be used as context managers to
+  ensure proper resource management. All scoped services will be disposed of
+  when the scope is exited.
+</p>
+
+<pre><code>from soupape import ServiceCollection, AsyncInjector, SyncInjector
+
+class ServiceA: ...
+
+class ServiceB:
+    def __init__(self, service_a: ServiceA) -> None:
+        self.service_a = service_a
+
+def define_services() -> ServiceCollection:
+    services = ServiceCollection()
+    services.add_singleton(ServiceA)
+    services.add_scoped(ServiceB)
+    return services
+
+async def main() -> None:
+    services = define_services()
+
+    # Using the async injector
+    async with AsyncInjector(services) as injector:
+        async with injector.get_scoped_injector() as scoped_injector:
+            service_b = await scoped_injector.require(ServiceB)
+
+    # Using the sync injector
+    with SyncInjector(services) as injector:
+        with injector.get_scoped_injector() as scoped_injector:
+            service_b = scoped_injector.require(ServiceB)
+</code></pre>
+
+<p>
+  When using multi-level scopes, be careful to which injector you are using to
+  resolve services. Scoped services are unique to their scope and its childs.
+  Resolving a scoped service from a parent injector will not return the same
+  instance as resolving it from a child scoped injector, but a scoped injector
+  can resolve scoped services from its parent scopes, even as dependencies of
+  other services.
+</p>

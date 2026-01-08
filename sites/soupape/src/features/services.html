@@ -1,0 +1,89 @@
+<a name="services"><h1>Services</h1></a>
+
+<p>
+  Any type that Soupape manages is called a service, whether you let Soupape
+  <a href="#built-in-injection">instantiate it</a> or use a
+  <a href="#custom-resolvers">custom resolver</a> to provide it. Services can
+  depend on other services, which will be automatically resolved and injected by
+  Soupape. The dependency chain can be as deep as needed but circular
+  dependencies are not allowed and will raise errors at injection time.
+</p>
+
+<p>
+  Services must be registered in a <code>ServiceCollection</code> before they
+  can be resolved by an injector.
+</p>
+
+<pre><code>from soupape import ServiceCollection
+
+class ServiceA: ...
+
+class ServiceB:
+    def __init__(self, service_a: ServiceA) -> None:
+        self.service_a = service_a
+
+services = ServiceCollection()
+services.add_singleton(ServiceA)
+services.add_scoped(ServiceB)
+</code></pre>
+
+<p>
+  Soupape supports three service lifetimes: singleton, scoped and transient.
+</p>
+
+<ul>
+  <li>
+    <strong>Singleton services</strong> are registered with
+    <code>add_singleton()</code>.
+    <ul>
+      <li>
+        They are instantiated only once per root injector and the same instance
+        is returned on every resolution, even in
+        <a href="#scoped-injectors">scoped injectors</a>.
+      </li>
+      <li>
+        They are disposed when the root injector is disposed. If their
+        instantiation is triggered in a scoped injector, they will still be
+        disposed when the root injector is disposed.
+      </li>
+      <li>They can only depend on transient and singleton services.</li>
+    </ul>
+  </li>
+
+  <li>
+    <strong>Scoped services</strong> are registered with
+    <code>add_scoped()</code>.
+    <ul>
+      <li>
+        They cannot be instantiated from the root injector. Their instantiation
+        must be triggered from a scoped injector. Doing so from the root
+        injector will raise an error.
+      </li>
+      <li>
+        They are instantiated once per injector scope. Every resolution from the
+        same scope and its child scopes will return the same instance.
+      </li>
+      <li>
+        They are disposed when the scoped injector they were instantiated from
+        is disposed.
+      </li>
+      <li>They can depend on transient, scoped and singleton services.</li>
+    </ul>
+  </li>
+
+  <li>
+    <strong>Transient services</strong> are registered with
+    <code>add_transient()</code>.
+    <ul>
+      <li>
+        They are instantiated every time they are resolved, whether from the
+        root injector or a scoped injector.
+      </li>
+      <li>
+        They are disposed when the injector they were instantiated from is
+        disposed.
+      </li>
+      <li>They can only depend on transient and singleton services.</li>
+    </ul>
+  </li>
+</ul>

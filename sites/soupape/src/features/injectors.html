@@ -1,0 +1,57 @@
+<a name="injectors"><h1>Injectors</h1></a>
+
+<p>
+  Soupape provides two injectors, <code>AsyncInjector</code> and
+  <code>SyncInjector</code>. The async injector unlocks the full potential of
+  Soupape and should be used whenever possible. But the sync injector is also
+  available for projects that do not use async code.
+</p>
+
+<p>An injector is created with a service collection as its sole argument.</p>
+
+<p>
+  Injectors implement the context manager protocol, and
+  <strong>should be used with the <code>with</code> statement</strong> to ensure
+  proper resource management. The async injector should be used with
+  <code>async with</code>.
+</p>
+
+<pre><code>from soupape import ServiceCollection, AsyncInjector, SyncInjector
+
+class ServiceA: ...
+
+class ServiceB:
+    def __init__(self, service_a: ServiceA) -> None:
+        self.service_a = service_a
+
+def define_services() -> ServiceCollection:
+    services = ServiceCollection()
+    services.add_singleton(ServiceA)
+    services.add_singleton(ServiceB)
+    return services
+
+async def main() -> None:
+    services = define_services()
+
+    # Using the async injector
+    async with AsyncInjector(services) as injector:
+        service_b = await injector.require(ServiceB)
+
+    # Using the sync injector
+    with SyncInjector(services) as injector:
+        service_b = injector.require(ServiceB)
+</code></pre>
+
+<p>
+  Services are resolved recursively by inspecting their constructors and
+  injecting their dependencies automatically. The instances are created
+  immediately, that is why circular dependencies are not allowed and will raise
+  errors at injection time.
+</p>
+
+<p>
+  If any service is not registered in the service collection, an error will be
+  raised at injection time, unless the type hint is marked as optional (e.g.,
+  <code>Optional[Service]</code> or <code>Service | None</code>). In that case,
+  <code>None</code> will be injected instead.
+</p>

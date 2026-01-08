@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
-import { createHtmlPlugin } from 'vite-plugin-html';
 import { resolve } from 'path';
+import { interpolatePlugin } from '../../shared/plugins/vite-plugin-interpolate.js';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -10,16 +10,10 @@ export default defineConfig(({ mode }) => {
     publicDir: resolve(__dirname, 'src/public'),
 
     plugins: [
-      createHtmlPlugin({
-        minify: true,
-        inject: {
-          data: {
-            title: 'Bolinette',
-            description: 'Bolinette - Under heavy work',
-            siteName: 'Bolinette',
-            peritypeUrl: env.VITE_PERITYPE_URL,
-            soupapeUrl: env.VITE_SOUPAPE_URL,
-          },
+      interpolatePlugin({
+        context: {
+          peritypeUrl: env.VITE_PERITYPE_URL,
+          soupapeUrl: env.VITE_SOUPAPE_URL,
         },
       }),
     ],

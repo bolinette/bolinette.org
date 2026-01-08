@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="{{description}}" />
-    <title>{{title}}</title>
+    <title>Soupape</title>
     <link rel="stylesheet" href="/styles/index.scss" />
   </head>
   <body>
@@ -27,12 +26,40 @@
       <div class="container docs-layout">
         <div class="docs-content">
           <section>{{> installation}}</section>
+          <section>{{> typing}}</section>
+          <section>{{> services}}</section>
+          <section>{{> injectors}}</section>
+          <section>{{> scoped-injectors}}</section>
+          <section>{{> built-in-injection}}</section>
+          <section>{{> custom-resolvers}}</section>
+          <section>{{> function-calling}}</section>
         </div>
 
-        <aside class="docs-toc">
+        <aside class="blnt-toc">
           <nav>
             <ul>
               <li><a href="#installation">Installation</a></li>
+              <li><a href="#typing">Typing</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#injectors">Injectors</a></li>
+              <li><a href="#scoped-injectors">Scoped Injectors</a></li>
+              <li>
+                <a href="#built-in-injection">Built-in injection</a>
+                <ul>
+                  <li>
+                    <a href="#built-in-injection--context-manager"
+                      >Context manager services</a
+                    >
+                  </li>
+                  <li>
+                    <a href="#built-in-injection--post-init"
+                      >Post-initialization methods</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li><a href="#custom-resolvers">Custom resolvers</a></li>
+              <li><a href="#function-calling">Function calling</a></li>
             </ul>
           </nav>
         </aside>
