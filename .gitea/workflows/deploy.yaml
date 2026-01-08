@@ -29,6 +29,14 @@ jobs:
             ${{ vars.REGISTRY_URL }}/${{ vars.PACKAGE_NS }}/${{ vars.BLNT_PACKAGE_NAME }}:latest
           platforms: linux/amd64
 
+      - name: Redeploy - bolinette.org
+        uses: benbristow/dokploy-deploy-action@0.2.2
+        with:
+          dokploy_url: ${{ vars.DOKPLOY_URL }}
+          api_token: ${{ secrets.DOKPLOY_SECRET }}
+          application_id: ${{ vars.BLNT_APP_ID }}
+          service_type: application
+
       - name: Build and push Docker image - peritype.bolinette.org
         uses: docker/build-push-action@v4
         with:
@@ -39,6 +47,14 @@ jobs:
             ${{ vars.REGISTRY_URL }}/${{ vars.PACKAGE_NS }}/${{ vars.PRTP_PACKAGE_NAME }}:latest
           platforms: linux/amd64
 
+      - name: Redeploy - peritype.bolinette.org
+        uses: benbristow/dokploy-deploy-action@0.2.2
+        with:
+          dokploy_url: ${{ vars.DOKPLOY_URL }}
+          api_token: ${{ secrets.DOKPLOY_SECRET }}
+          application_id: ${{ vars.PRTP_APP_ID }}
+          service_type: application
+
       - name: Build and push Docker image - soupape.bolinette.org
         uses: docker/build-push-action@v4
         with:
@@ -48,3 +64,11 @@ jobs:
           tags: |
             ${{ vars.REGISTRY_URL }}/${{ vars.PACKAGE_NS }}/${{ vars.SPP_PACKAGE_NAME }}:latest
           platforms: linux/amd64
+
+      - name: Redeploy - soupape.bolinette.org
+        uses: benbristow/dokploy-deploy-action@0.2.2
+        with:
+          dokploy_url: ${{ vars.DOKPLOY_URL }}
+          api_token: ${{ secrets.DOKPLOY_SECRET }}
+          application_id: ${{ vars.SPP_APP_ID }}
+          service_type: application
