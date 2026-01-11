@@ -1,42 +1,48 @@
-@use '@styles/variables' as * with (
+@use "@styles/variables" as * with (
   $primary-color: #b5a642,
   $secondary-color: #006d5f,
   $accent-color: #659448
 );
-@use '@styles/index.scss';
+@use "@styles/index.scss";
 
 .blnt-header {
-    .github-banner {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+  .header-links {
+    display: flex;
+    gap: $spacing-lg;
+    font-weight: $font-weight-bold;
 
-        img {
-            height: 24px;
-        }
+    .github-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      img {
+        height: 24px;
+      }
     }
+  }
 }
 
 .main-content {
-    .big-name {
-        font-size: $font-size-7xl;
-        font-weight: $font-weight-bold;
-        text-align: center;
-        margin: $spacing-xl 0;
-    }
+  .big-name {
+    font-size: $font-size-7xl;
+    font-weight: $font-weight-bold;
+    text-align: center;
+    margin: $spacing-xl 0;
+  }
 }
 
 .docs-layout {
-    display: grid;
-    grid-template-columns: 1fr 250px;
-    gap: $spacing-2xl;
-    align-items: start;
+  display: grid;
+  grid-template-columns: 1fr 250px;
+  gap: $spacing-2xl;
+  align-items: start;
 
-    @media (max-width: $breakpoint-lg) {
-        grid-template-columns: 1fr;
-    }
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .docs-content {
-    min-width: 0;
+  min-width: 0;
 }

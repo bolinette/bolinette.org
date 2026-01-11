@@ -1,3 +1,98 @@
 <a name="custom-resolvers"><h1>Custom resolvers</h1></a>
 
-<p><em>Coming soon</em></p>
+<p>
+  The built-in resolver mechanisms provided by Soupape cover most use cases.
+  However, there might be scenarios where you need to implement a custom
+  resolution function.
+</p>
+
+<p>
+  Such functions must declare the return type that will be used to resolve the
+  dependency. The parameters can be anything, as long as they can be resolved by
+  Soupape. Resolver functions can be asynchronous, but only the
+  <code>AsyncInjector</code> can use them.
+</p>
+
+<pre><code>from soupape import AsyncInjector, ServiceCollection
+from my_app.services.http import HttpService
+from my_app.resources import SomeResource, get_some_resource
+
+class MyService:
+    def __init__(self, http_service: HttpService, some_resource: SomeResource) -> None:
+        self.http_service = http_service
+        self.some_resource = some_resource
+
+async def my_service_resolver(
+    http_service: HttpService,
+) -> MyService:
+    some_resource = await get_some_resource(http_service)
+    return MyService(http_service, some_resource)
+
+services = ServiceCollection()
+services.add_singleton(HttpService)
+services.add_scoped(my_service_resolver)
+</code></pre>
+
+<p>
+  This example is really basic, but it shows how to create a custom resolver
+  function that depends on other services. The function is registered in the
+  service collection, the return type is used as the service registration type.
+</p>
+
+<p>
+  Like with the built-in resolver, you can register custom resolvers
+  <a href="#services--interfaces">with an interface</a>. The return type of the
+  function will be used as the instance key and the interface to resolve the
+  service.
+</p>
+
+<pre><code>from my_app.services.interfaces import IMyService
+
+services.add_scoped(IMyService, my_service_resolver)
+</code></pre>
+
+<a name="custom-resolvers--resources"><h2>Resource management</h2></a>
+
+<p>
+  Post initialization methods will not be called for services created with
+  custom resolvers. And you have to make sure to handle disposal of resources
+  yourself if needed. Context manager services will not automatically work
+  either. You can manually use context managers inside your resolver functions
+  if needed.
+</p>
+
+<pre><code>from soupape import ServiceCollection
+
+async def my_service_resolver() -> MyService:
+    async with MyService() as my_service:
+        return my_service
+
+services = ServiceCollection()
+services.add_scoped(my_service_resolver)
+</code></pre>
+
+<a name="custom-resolvers--generators"><h2>Generator resolvers</h2></a>
+
+<p>
+  Antother way to manage resources with custom resolvers is to use generator
+  functions. These functions use the <code>yield</code> statement to provide the
+  service instance. After the injector scope is closed, the code after the
+  <code>yield</code> statement is executed, allowing you to clean up resources.
+</p>
+
+<pre><code>from soupape import ServiceCollection
+
+async def my_async_service_resolver() -> MyAsyncService:
+    my_service = MyAsyncService()
+    try:
+        yield my_service
+    finally:
+        await my_service.dispose()
+
+def my_sync_service_resolver() -> MySyncService:
+    my_service = MySyncService()
+    try:
+        yield my_service
+    finally:
+        my_service.dispose()
+</code></pre>

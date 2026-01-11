@@ -1,0 +1,94 @@
+<a name="misc"><h1>Miscellaneous</h1></a>
+
+<a name="misc--require-injector"><h2>Require the injector</h2></a>
+
+<p>
+  You can require the injector itself as a dependency in your services. This is
+  useful when you need to resolve other dependencies manually or avoid circular
+  injection while having a circular dependency in your services.
+</p>
+
+<p>
+  You can require <code>SyncInjector</code> or <code>AsyncInjector</code> if you
+  know which one will be used to resolve the service. But you can also require
+  the <code>Injector</code> protocol, which will work with both injectors, but
+  you will lose type information about whether the injector is synchronous or
+  asynchronous.
+</p>
+
+<a name="misc--generics"><h2>Require the generic type</h2></a>
+
+<p>
+  If your service is generic, you can require the generic type parameters as
+  dependencies. This allows you to write a generic service that can manipulate
+  its concrete type parameters.
+</p>
+
+<pre><code>from collections.abc import Sequence
+from soupape import ServiceCollection
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from my_app.models import User
+
+async def get_async_session() -> AsyncSession: ...
+
+class Repository[T]:
+    def __init__(self, session: AsyncSession, entity_type: type[T]) -> None:
+        self.session = session
+        self.entity_type = entity_type
+
+    async def get_all(self) -> Sequence[T]:
+        result = await self.session.execute(select(self.entity_type))
+        return result.scalars().all()
+
+services = ServiceCollection()
+services.add_scoped(get_async_session)
+services.add_scoped(Repository[User])
+
+async def main():
+    injector = AsyncInjector(services)
+    user_repository = await injector.require(Repository[User])
+    users = await user_repository.get_all()
+</code></pre>
+
+<p>
+  This a concrete example of a generic repository service that can be used to
+  fetch all entities of a given type from a database using SQLAlchemy. The
+  <code>entity_type</code> parameter is automatically resolved by Soupape when
+  the <code>Repository</code> service is instantiated. <code>type[Any]</code>
+  triggers a special resolver that's always available and the concrete type is
+  inferred from the generic type parameter used to register the service.
+</p>
+
+<a name="misc--any-service"
+  ><h2>Registration with <code>Any</code></h2></a
+>
+
+<p>
+  You can register generic services using <code>Any</code> as their type
+  parameter. This allows you to create a generic service that can handle any
+  type without specifying the exact type parameter at registration time.
+</p>
+
+<p>
+  In the previous example, we could register the <code>Repository</code> service
+  using <code>Any</code> as its type parameter. Requiring
+  <code>Repository[User]</code> would still return a properly typed instance of
+  the service.
+</p>
+
+<p>
+  This creates a catch-all registration for the generic service. You can still
+  register specific type parameters if you want to override the generic behavior
+  for certain types. If you create several <code>Any</code> registrations for
+  the same generic service, it is not defined which one will be used when
+  resolving a specific type parameter if the specific type parameter is not
+  registered.
+</p>
+
+<p>
+  If your service has multiple generic type parameters, you can specify some and
+  use <code>Any</code> for others. When looking for a valid resolver, Soupape
+  will match the first registration that fits the requested type parameters.
+  Types are only matched exactly, a super type will not match a subtype.
+</p>

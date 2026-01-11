@@ -27,6 +27,8 @@ services.add_singleton(ServiceA)
 services.add_scoped(ServiceB)
 </code></pre>
 
+<a name="services--lifetimes"><h2>Service lifetimes</h2></a>
+
 <p>
   Soupape supports three service lifetimes: singleton, scoped and transient.
 </p>
@@ -87,3 +89,36 @@ services.add_scoped(ServiceB)
     </ul>
   </li>
 </ul>
+
+<a name="services--interfaces"><h2>Interfaces</h2></a>
+
+<p>
+  It is possible to register a service using antoher type or interface as its
+  key. This is useful when you want to register a service as an implementation
+  of an interface or an abstract base class.
+</p>
+
+<pre><code>from soupape import ServiceCollection
+
+class BaseService[T]: ...
+
+class Service(BaseService[int]): ...
+
+services = ServiceCollection()
+services.add_singleton(BaseService[int], Service)
+services.add_singleton(Service)
+</code></pre>
+
+<p>
+  The interface is the first parameter. The implementation does not have to be a
+  subclass of the interface, you can register any type. It's the implementation
+  that will be instantiated when the interface is resolved.
+</p>
+
+<p>
+  In the example above, <code>Service</code> has been registered both as itself
+  and as an implementation of <code>BaseService[int]</code>. Resolving either
+  type will return the same singleton instance. In Soupape, instances are always
+  registered under their concrete type, no matter what interface they were
+  registered with.
+</p>

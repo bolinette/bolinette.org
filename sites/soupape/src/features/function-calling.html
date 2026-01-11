@@ -1,3 +1,37 @@
 <a name="function-calling"><h1>Function calling</h1></a>
 
-<p><em>Coming soon</em></p>
+<p>
+  Dependency injection is not just for class constructors; you can also use it
+  to call regular functions with automatic dependency resolution.
+</p>
+
+<pre><code>from soupape import AsyncInjector, ServiceCollection
+
+class HttpService: ...
+
+async def fetch_data(url: str, http_service: HttpService) -> str:
+    response = await http_service.get(url)
+    return response.text
+
+services = ServiceCollection()
+services.add_singleton(HttpService)
+
+injector = AsyncInjector(services)
+data = await injector.call(fetch_data, positional_args=["https://example.com/api/data"])
+</code></pre>
+
+<p>
+  In this example, we define an asynchronous function
+  <code>fetch_data</code> that depends on an <code>HttpService</code>. The first
+  parameter, <code>url</code>, cannot be resolved by the injector, so we provide
+  it as a positional argument when calling the function. Such arguments must be
+  placed before any dependencies and provided in the correct order. The injector
+  will automatically resolve the <code>http_service</code> parameter and call
+  the function.
+</p>
+
+<p>
+  <code>AsyncInjector</code>'s <code>call()</code> method is asynchronous, and
+  awaits the result of your function so that you don't have to write
+  <code>await await injector.call(my_async_function)</code>.
+</p>

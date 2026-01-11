@@ -9,11 +9,17 @@
   <body>
     <header class="blnt-header">
       <div class="container">
-        <a href="/" class="site-name">Soupape</a>
-        <a href="https://github.com/bolinette/soupape" class="github-banner">
-          <img src="github-mark.svg" alt="GitHub Logo" />
-          <img src="github-logo.png" alt="GitHub Logo" />
-        </a>
+        <div>
+          <a href="/" class="site-name link">Soupape</a>
+        </div>
+        <div class="header-links">
+          <a href="{{ mainUrl }}" class="link" title="Bolinette">B</a>
+          <a href="{{ peritypeUrl }}" class="link" title="Peritype">P</a>
+          <a href="https://github.com/bolinette/peritype" class="github-banner">
+            <img src="github-mark.svg" alt="GitHub Logo" />
+            <img src="github-logo.png" alt="GitHub Logo" />
+          </a>
+        </div>
       </div>
     </header>
 
@@ -33,6 +39,7 @@
           <section>{{> built-in-injection}}</section>
           <section>{{> custom-resolvers}}</section>
           <section>{{> function-calling}}</section>
+          <section>{{> misc}}</section>
         </div>
 
         <aside class="blnt-toc">
@@ -40,7 +47,13 @@
             <ul>
               <li><a href="#installation">Installation</a></li>
               <li><a href="#typing">Typing</a></li>
-              <li><a href="#services">Services</a></li>
+              <li>
+                <a href="#services">Services</a>
+                <ul>
+                  <li><a href="#services--lifetimes">Service lifetimes</a></li>
+                  <li><a href="#services--interfaces">Interfaces</a></li>
+                </ul>
+              </li>
               <li><a href="#injectors">Injectors</a></li>
               <li><a href="#scoped-injectors">Scoped Injectors</a></li>
               <li>
@@ -58,8 +71,33 @@
                   </li>
                 </ul>
               </li>
-              <li><a href="#custom-resolvers">Custom resolvers</a></li>
+              <li>
+                <a href="#custom-resolvers">Custom resolvers</a>
+                <ul>
+                  <li>
+                    <a href="#custom-resolvers--resources"
+                      >Resource management</a
+                    >
+                  </li>
+                </ul>
+              </li>
               <li><a href="#function-calling">Function calling</a></li>
+              <li>
+                <a href="#misc">Miscellaneous</a>
+                <ul>
+                  <li>
+                    <a href="#misc--require-injector">Require the injector</a>
+                  </li>
+                  <li>
+                    <a href="#misc--generics">Require the generic type</a>
+                  </li>
+                  <li>
+                    <a href="#misc--any-service"
+                      >Registration with <code>Any</code></a
+                    >
+                  </li>
+                </ul>
+              </li>
             </ul>
           </nav>
         </aside>
